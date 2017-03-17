@@ -156,3 +156,31 @@ LRESULT CCABNodeExplorerRightView::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lPa
 	
 	return lRes;
 }
+
+LRESULT CCABNodeExplorerRightView::OnLVItemClick(int /*idCtrl*/, LPNMHDR pnmh, BOOL& /*bHandled*/)
+{
+	CString str;
+	if (pnmh->hwndFrom == this->m_hWnd)
+	{
+		POINT pt;
+		::GetCursorPos((LPPOINT)&pt);
+		this->ScreenToClient(&pt);
+
+		LVHITTESTINFO lvhti;
+		lvhti.pt = pt;
+		this->HitTest(&lvhti);
+		LVITEM lvi;
+		if (lvhti.flags & LVHT_ONITEM)
+		{
+			// 		this->ClientToScreen(&pt);
+			// 		lvi.mask = LVIF_PARAM;
+			// 		lvi.iItem = lvhti.iItem;
+			// 		lvi.iSubItem = 0;
+			// 		if (!this->GetItem(&lvi))
+			// 			return 0;
+
+			GetItemText(lvhti.iItem, 0, str);
+		}
+	}
+	m_pMain->SetSelect(str);
+}

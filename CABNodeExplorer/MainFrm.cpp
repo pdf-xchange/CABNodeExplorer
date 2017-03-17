@@ -50,7 +50,7 @@ BOOL CMainFrame::OnIdle()
 	UIEnable(ID_FILE_SAVE, FALSE);
 	UIEnable(ID_FILE_SAVE_AS, FALSE);
 	UIEnable(ID_EDIT_CUT, FALSE);
-	UIEnable(ID_EDIT_COPY, FALSE);
+	UIEnable(ID_EDIT_COPY, m_worker.CanSelect());
 	UIEnable(ID_EDIT_PASTE, FALSE);
 	UIEnable(ID_FILE_PRINT, FALSE);
 	//UIEnable(ID_FILE_SAVE, FALSE);
@@ -230,10 +230,45 @@ LRESULT CMainFrame::OnAppNext(WORD /*wNotifyCode*/, WORD /*wID*/, HWND hWndCtl, 
 	return 0;
 }
 
+LRESULT CMainFrame::OnCopy(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
+{
+	ATLASSERT(::IsWindow(m_hWnd));
+	BOOL bOK = OpenClipboard();
+	if (bOK != FALSE)
+	{
+		bOK = EmptyClipboard();
+		if (bOK != FALSE)
+		{
+			CStringW str = m_worker.GetSelect();
+			CGlobalHeap glb;
+			{
+				CStringA strASCII(str);
+				const size_t nSize = (strASCII.GetLength() + 1) * sizeof(char);
+				HGLOBAL hGlob = glb.Allocate(nSize);
+				strcpy_s((LPSTR)hGlob, nSize, strASCII.GetBuffer());
+				bOK = SetClipboardData(CF_TEXT, hGlob) != NULL;
+				if (bOK == FALSE)
+					glb.Free(hGlob);
+			}
+			{
+				const size_t nSize = (str.GetLength() + 1) * sizeof(wchar_t);
+				HGLOBAL hGlob = glb.Allocate(nSize);
+				wcscpy_s((LPWSTR)hGlob, str.GetLength() + 1, str.GetBuffer());
+				bOK = SetClipboardData(CF_UNICODETEXT, hGlob) != NULL;
+				if (bOK == FALSE)
+					glb.Free(hGlob);
+			}
+		}
+		CloseClipboard();
+	}
+	return (bOK != FALSE);
+}
+
 void CMainFrame::LoadPath(const CString& strPath)
 {
 	m_wndToolBarPath.SetWindowText(strPath);
 	m_wndView2.ShowCab(strPath);
+	m_worker.SetSelect(strPath);
 }
 
 void CMainFrame::LoadPathChild(const CString& strPath)
@@ -246,5 +281,14 @@ void CMainFrame::LoadPathChild(const CString& strPath)
 	m_wndView1.ShowCab(str);
 	m_wndView2.ShowCab(str);
 
+}
+
+void CMainFrame::SetSelect(LPCWSTR sName)
+{
+	CString str;
+	m_wndToolBarPath.GetWindowText(str);
+	str.Append(L".");
+	str.Append(sName);
+	m_worker.SetSelect(str);
 }
 

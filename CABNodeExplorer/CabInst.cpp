@@ -28,3 +28,18 @@ int CCabInst::TreeItemSelectedImage(_cab_node_t& pNode)
 	return 0;
 }
 
+bool CCabInst::CanSelect()
+{
+	return !m_strSelectPath.IsEmpty();
+}
+
+CStringW CCabInst::GetSelect()
+{
+	return m_strSelectPath;
+}
+
+void CCabInst::SetSelect(LPCWSTR str)
+{
+	m_strSelectPath = str;
+}
+

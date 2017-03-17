@@ -55,6 +55,7 @@ public:
 		COMMAND_ID_HANDLER(ID_EXPLORERGO, OnAppGo)
 		COMMAND_ID_HANDLER(ID_EXPLORERBACK, OnAppBack)
 		COMMAND_ID_HANDLER(ID_EXPLORERTAB, OnAppNext)
+		COMMAND_ID_HANDLER(ID_EDIT_COPY, OnCopy)
 		CHAIN_MSG_MAP(CUpdateUI<CMainFrame>)
 		CHAIN_MSG_MAP(CFrameWindowImpl<CMainFrame>)
 		CHAIN_MSG_MAP_ALT_MEMBER(m_wndToolBarPath, 1)
@@ -77,7 +78,9 @@ public:
 	LRESULT OnAppGo(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
 	LRESULT OnAppBack(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
 	LRESULT OnAppNext(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
+	LRESULT OnCopy(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
 
 	void LoadPath(const CString& strPath);
 	void LoadPathChild(const CString& strPath);
+	void SetSelect(LPCWSTR str);
 };

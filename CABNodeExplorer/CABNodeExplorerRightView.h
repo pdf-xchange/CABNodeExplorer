@@ -30,6 +30,8 @@ public:
 
 	BEGIN_MSG_MAP(CCABNodeExplorerRightView)
 		MESSAGE_HANDLER(WM_CREATE, OnCreate)
+		REFLECTED_NOTIFY_CODE_HANDLER(NM_CLICK, OnLVItemClick)
+		REFLECTED_NOTIFY_CODE_HANDLER(NM_DBLCLK, OnLVItemClick)
 	END_MSG_MAP()
 
 // Handler prototypes (uncomment arguments if needed):
@@ -38,4 +40,5 @@ public:
 //	LRESULT NotifyHandler(int /*idCtrl*/, LPNMHDR /*pnmh*/, BOOL& /*bHandled*/)
 
 	LRESULT OnCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
+	LRESULT OnLVItemClick(int /*idCtrl*/, LPNMHDR pnmh, BOOL& /*bHandled*/);
 };

@@ -12,5 +12,9 @@ public:
 	int TreeItemImage(_cab_node_t& pNode);
 	int TreeItemSelectedImage(_cab_node_t& pNode);
 
+	bool CanSelect();
+	CStringW GetSelect();
+	void SetSelect(LPCWSTR str);
+	CStringW m_strSelectPath;
 };
 
