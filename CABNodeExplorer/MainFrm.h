@@ -8,6 +8,7 @@
 #include "CABNodeExplorerRightView.h"
 #include "CabInst.h"
 #include "ToolBarCombo.h"
+#include "ToolBarFind.h"
 
 #define MSG_POSTCREATE	(WM_USER + 512)
 
@@ -21,6 +22,7 @@ public:
 	CCABNodeExplorerRightView m_wndView2;
 	CSplitterWindow m_wndSplitter;
 	CToolBarCombo	m_wndToolBarPath;
+	CToolBarFind	m_wndToolBarFind;
 	CCommandBarCtrl m_CmdBar;
 	CCabInst		m_worker;
 
@@ -51,8 +53,11 @@ public:
 		COMMAND_ID_HANDLER(ID_FILE_NEW, OnFileNew)
 		COMMAND_ID_HANDLER(ID_VIEW_TOOLBAR, OnViewToolBar)
 		COMMAND_ID_HANDLER(ID_VIEW_STATUS_BAR, OnViewStatusBar)
+		COMMAND_ID_HANDLER(ID_VIEW_SEARCHBAR, OnViewSearchBar)
 		COMMAND_ID_HANDLER(ID_APP_ABOUT, OnAppAbout)
 		COMMAND_ID_HANDLER(ID_EXPLORERGO, OnAppGo)
+		COMMAND_ID_HANDLER(ID_BTN_FIND, OnAppFind)
+		COMMAND_ID_HANDLER(ID_BTN_FIND_NEXT, OnAppFindNext)
 		COMMAND_ID_HANDLER(ID_EXPLORERBACK, OnAppBack)
 		COMMAND_ID_HANDLER(ID_EXPLORERTAB, OnAppNext)
 		CHAIN_MSG_MAP(CUpdateUI<CMainFrame>)
@@ -75,6 +80,8 @@ public:
 	LRESULT OnViewStatusBar(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
 	LRESULT OnAppAbout(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
 	LRESULT OnAppGo(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
+	LRESULT OnAppFind(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
+	LRESULT OnAppFindNext(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
 	LRESULT OnAppBack(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
 	LRESULT OnAppNext(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
 
