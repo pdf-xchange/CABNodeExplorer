@@ -51,6 +51,9 @@
     <ClInclude Include="ToolBarCombo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ToolBarFind.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CABNodeExplorerLeftView.cpp">
@@ -77,6 +80,9 @@
     <ClCompile Include="ToolBarCombo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ToolBarFind.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="CABNodeExplorer.rc">
@@ -91,6 +97,9 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="res\toolbar1.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\toolbar2.bmp">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

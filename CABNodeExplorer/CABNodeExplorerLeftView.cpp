@@ -177,6 +177,8 @@ void CCABNodeExplorerLeftView::ShowCab(const CString& strPath)
 				}
 				else if (hItem.HasChildren())
 				{
+					if (hItem.GetChild() == NULL)
+						hItem.Expand();
 					_path(hItem.GetChild(), strPath.Mid(strFind.GetLength() + 1));
 				}
 			}

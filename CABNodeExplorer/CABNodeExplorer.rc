@@ -49,7 +49,7 @@ END
 // Toolbar
 //
 
-IDR_MAINFRAME TOOLBAR 16, 15
+IDT_MAINFRAME TOOLBAR 16, 15
 BEGIN
     BUTTON      ID_FILE_SAVE
     SEPARATOR
@@ -63,15 +63,23 @@ BEGIN
     BUTTON      ID_EXPLORERGO
 END
 
+IDT_FIND TOOLBAR 16, 15
+BEGIN
+    BUTTON      ID_BTN_FIND
+    BUTTON      ID_BTN_FIND_NEXT
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // Bitmap
 //
 
-IDR_MAINFRAME           BITMAP                  "res\\Toolbar.bmp"
+IDT_MAINFRAME           BITMAP                  "res\\Toolbar.bmp"
 
 IDT_ADDRESS             BITMAP                  "res\\toolbar1.bmp"
+
+IDT_FIND                BITMAP                  "res\\toolbar2.bmp"
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -96,6 +104,7 @@ BEGIN
     BEGIN
         MENUITEM "&Toolbar",                    ID_VIEW_TOOLBAR
         MENUITEM "&Status Bar",                 ID_VIEW_STATUS_BAR
+        MENUITEM "Search Bar",                  ID_VIEW_SEARCHBAR
     END
     POPUP "&Help"
     BEGIN
@@ -311,6 +320,13 @@ END
 STRINGTABLE
 BEGIN
     ATL_IDS_MRU_FILE        "Open this document"
+END
+
+STRINGTABLE
+BEGIN
+    IDS_NOT_FOUND           "Name not found."
+    IDS_LAST_RESULT         "It was last result."
+    IDS_INFO_WINDOW         "Info"
 END
 
 #endif    // English (United States) resources

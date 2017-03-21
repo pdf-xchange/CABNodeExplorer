@@ -41,6 +41,9 @@ BOOL CMainFrame::PreTranslateMessage(MSG* pMsg)
 
 	if (m_wndToolBarPath.PreTranslateMessage(pMsg))
 		return TRUE;
+
+	if (m_wndToolBarFind.PreTranslateMessage(pMsg))
+		return TRUE;
 	return FALSE;
 }
 
@@ -71,12 +74,16 @@ LRESULT CMainFrame::OnCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/
 
 	HWND hWndToolBar = CreateSimpleToolBarCtrl(m_hWnd, IDR_MAINFRAME, FALSE, ATL_SIMPLE_TOOLBAR_PANE_STYLE);
 	m_wndToolBarPath.Create(m_hWnd, rcDefault, NULL, WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBS_DROPDOWN | CBS_AUTOHSCROLL);
+	m_wndToolBarFind.Create(m_hWnd, rcDefault, NULL, WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBS_DROPDOWN | CBS_AUTOHSCROLL);
+	
+	m_wndToolBarFind.m_pMain = this;
+	m_wndToolBarFind.m_pWorker = &m_worker;
 
 	CreateSimpleReBar(ATL_SIMPLE_REBAR_NOBORDER_STYLE);
 	AddSimpleReBarBand(hWndCmdBar);
 	AddSimpleReBarBand(hWndToolBar, NULL, TRUE);
 	AddSimpleReBarBand(m_wndToolBarPath, NULL, TRUE);
-	
+	AddSimpleReBarBand(m_wndToolBarFind, NULL, TRUE);
 
 	CreateSimpleStatusBar();
 	// Creating splitter and views
@@ -112,6 +119,7 @@ LRESULT CMainFrame::OnCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/
 	// End creating splitter and views
 
 	UIAddToolBar(hWndToolBar);
+
 	UISetCheck(ID_VIEW_TOOLBAR, 1);
 	UISetCheck(ID_VIEW_STATUS_BAR, 1);
 
@@ -193,6 +201,27 @@ LRESULT CMainFrame::OnAppGo(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& /*bH
 		//m_wndView2.ShowCab(strPath);
 		m_wndView2.SetFocus();
 	}
+	return 0;
+}
+
+
+LRESULT CMainFrame::OnAppFind(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& /*bHandled*/)
+{
+
+	CString str;
+	m_wndToolBarFind.GetWindowText(str);
+	m_wndToolBarFind.m_vAlreadyFound.clear();
+	m_wndToolBarFind.FindCurrNameInCab();
+	m_wndToolBarFind.AddItem(str, 0, 0, 0);
+	return 0;
+}
+
+LRESULT CMainFrame::OnAppFindNext(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& /*bHandled*/)
+{
+	CString str;
+	m_wndToolBarFind.GetWindowText(str);
+	m_wndToolBarFind.FindCurrNameInCab();
+	m_wndToolBarFind.AddItem(str, 0, 0, 0);
 	return 0;
 }
 
