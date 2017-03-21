@@ -41,6 +41,9 @@ BOOL CMainFrame::PreTranslateMessage(MSG* pMsg)
 
 	if (m_wndToolBarPath.PreTranslateMessage(pMsg))
 		return TRUE;
+
+	if (m_wndToolBarFind.PreTranslateMessage(pMsg))
+		return TRUE;
 	return FALSE;
 }
 

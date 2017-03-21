@@ -55,7 +55,6 @@ public:
 	BEGIN_MSG_MAP(CToolBarFind)
 		MESSAGE_HANDLER(WM_CREATE, OnCreate)
 		MESSAGE_HANDLER(WM_DESTROY, OnDestroy)
-		//MESSAGE_HANDLER(WM_ERASEBKGND, OnEraseBkgnd)
 		MESSAGE_HANDLER(WM_WINDOWPOSCHANGING, OnWindowPosChanging)
 		MESSAGE_HANDLER(WM_SETFOCUS, OnSetFocus)
 		ALT_MSG_MAP(1)
@@ -73,6 +72,7 @@ public:
 	bool FindCurrNameInCab();
 
 private:
-	bool FindCurrNameInCab(CString & sParent, _cab_node_t& parentNode);
+	bool FindCurrNameInCab(CString & sParent, CString & sFoundKey, _cab_node_t& parentNode);
+	CString GetStringOfValue(_cab_node_t& pNode);
 };
 

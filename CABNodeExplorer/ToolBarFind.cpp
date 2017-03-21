@@ -12,7 +12,7 @@ BOOL CToolBarFind::PreTranslateMessage(MSG* pMsg)
 		int nVirtKey = (int)pMsg->wParam;
 		if (nVirtKey == VK_RETURN && m_cb.IsChild(pMsg->hwnd))
 		{
-			SendMessageW(WM_COMMAND, MAKEWPARAM(ID_EXPLORERGO, BN_CLICKED));
+			SendMessageW(WM_COMMAND, MAKEWPARAM(ID_BTN_FIND, BN_CLICKED));
 			return TRUE;
 		}
 	}
@@ -41,7 +41,7 @@ LRESULT CToolBarFind::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& /*
 		m_cb.SetDroppedWidth(m_cxMinDropWidth);
 
 		CEdit edt = GetEditCtrl();
-		m_edit.Attach(edt);
+		//m_edit.Attach(edt);
 
 		m_tb = CFrameWindowImplBase<>::CreateSimpleToolBarCtrl(m_hWnd, IDT_FIND, FALSE, ATL_SIMPLE_TOOLBAR_PANE_STYLE | TBSTYLE_LIST);
 		LPCTSTR lpszStringsFind = _T("Find\0");
@@ -148,21 +148,34 @@ bool CToolBarFind::FindCurrNameInCab()
 	if (!str.IsEmpty())
 	{
 		CString sPath;
-		if (FindCurrNameInCab(sPath, m_pWorker->m_rootNode))
+		CString sKeyName;
+		if (FindCurrNameInCab(sPath, sKeyName, m_pWorker->m_rootNode))
 		{
 			m_vAlreadyFound.push_back(sPath);
 			m_pMain->m_wndView1.ShowCab(sPath);
 			_cab_node_t pNode(m_pWorker->m_rootNode.at(sPath.GetBuffer()));
 			PXV::CabDataTypeID idType = pNode.GetType();
+			int nSelectItemAtRight = -1;
 			if (idType != PXV::dt_Dictionary && idType != PXV::dt_Array)
 			{
 				for (int i = sPath.GetLength() - 1; i >= 0; i--)
-					if (sPath[i] == L'.')
+					if (sPath[i] == L'.') 
+					{
 						sPath.Delete(i, sPath.GetLength() - i);
+						break;
+					}
+				
+				_cab_node_t pParentNode(m_pWorker->m_rootNode.at(sPath.GetBuffer()));
+				auto vKeys = pParentNode.Dictionary_GetKeys();
+				auto it = find(vKeys.begin(), vKeys.end(), sKeyName);
+				if (it != vKeys.end())
+					nSelectItemAtRight = (int)std::distance(vKeys.begin(), it);
 			}
+			
 			m_pMain->m_wndView2.DeleteAllItems();
 			m_pMain->m_wndView2.FullCab(sPath);
-			m_pMain->m_wndView2.SetFocus();
+			
+			m_pMain->m_wndView2.SelectItem(nSelectItemAtRight);			
 		}
 		else
 		{
@@ -177,7 +190,7 @@ bool CToolBarFind::FindCurrNameInCab()
 	return false;
 }
 
-bool CToolBarFind::FindCurrNameInCab(CString & sParent, _cab_node_t& parentNode)
+bool CToolBarFind::FindCurrNameInCab(CString & sParent, CString & sFoundKey, _cab_node_t& parentNode)
 {
 	CString str;
 	GetWindowText(str);
@@ -189,19 +202,28 @@ bool CToolBarFind::FindCurrNameInCab(CString & sParent, _cab_node_t& parentNode)
 		auto names = parentNode.Dictionary_GetKeys();
 		for (auto strName : names)
 		{
+			CString sNameBefore = strName;
+			_cab_node_t pNode(parentNode.at(strName.GetBuffer()));
+			PXV::CabDataTypeID idType = pNode.GetType();
 			if (!sParent.IsEmpty())
 				sParent.Append(L".");
 			sParent.Append(strName);
-			if (str == strName)
+			str.MakeLower();
+			strName.MakeLower();
+			int nLast = strName.GetLength();
+			int nResult = strName.Find(str, 0);
+			CString sVal = GetStringOfValue(pNode);
+			if ((strName.Find(str) != -1) || (sVal.Find(str) != -1))
 			{
 				if (std::find(m_vAlreadyFound.begin(), m_vAlreadyFound.end(), sParent) == m_vAlreadyFound.end())
+				{
+					sFoundKey = sNameBefore;
 					return true;
-			}
-			_cab_node_t pNode(parentNode.at(strName.GetBuffer()));
-			PXV::CabDataTypeID idType = pNode.GetType();
+				}		
+			}		
 			if (idType == PXV::dt_Dictionary)
 			{
-				if (FindCurrNameInCab(sParent, pNode))
+				if (FindCurrNameInCab(sParent, sFoundKey, pNode))
 					return true;
 			}
 			sParent = sBefore;
@@ -209,5 +231,52 @@ bool CToolBarFind::FindCurrNameInCab(CString & sParent, _cab_node_t& parentNode)
 	}
 	sParent = sBefore;
 	return false;
+}
+
+
+CString CToolBarFind::GetStringOfValue( _cab_node_t& pNode)
+{
+	PXV::CabDataTypeID idType = pNode.GetType();
+	CString strValue;
+	if (idType != PXV::dt_Dictionary && idType != PXV::dt_Array)
+	{
+		switch (idType)
+		{
+		case PXV::dt_Undefined:
+			strValue = "Undefined";
+			break;
+		case PXV::dt_Bool:
+			strValue = (bool)pNode ? "true" : "false";
+			break;
+		case PXV::dt_Int:
+			strValue.Format(L"%d", (int)pNode);
+			break;
+		case PXV::dt_Int64:
+			strValue.Format(L"%I64d", (__int64)pNode);
+			break;
+		case PXV::dt_Double:
+			strValue.Format(L"%f", (double)pNode);
+			break;
+		case PXV::dt_String:
+			strValue.Format(L"\"%s\"", (LPCWSTR)pNode);
+			break;
+		case PXV::dt_Stream:
+			strValue = "Stream";
+			break;
+		case PXV::dt_IUnknown:
+		{
+			_unknown_t unk;
+			pNode.GetValue(unk);
+			strValue.Format(L"0x%Hd", (void*)unk);
+			break;
+		}
+		case PXV::dt_Container:
+			strValue = "Container";
+			break;
+		default:
+			break;
+		}
+	}
+	return strValue;
 }
 
