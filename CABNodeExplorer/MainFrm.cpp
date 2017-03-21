@@ -81,9 +81,9 @@ LRESULT CMainFrame::OnCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/
 
 	CreateSimpleReBar(ATL_SIMPLE_REBAR_NOBORDER_STYLE);
 	AddSimpleReBarBand(hWndCmdBar);
-	AddSimpleReBarBand(hWndToolBar, NULL, TRUE);
+	AddSimpleReBarBand(hWndToolBar, NULL, TRUE, 400);
+	AddSimpleReBarBand(m_wndToolBarFind, NULL, FALSE, 400);
 	AddSimpleReBarBand(m_wndToolBarPath, NULL, TRUE);
-	AddSimpleReBarBand(m_wndToolBarFind, NULL, TRUE);
 
 	CreateSimpleStatusBar();
 	// Creating splitter and views

@@ -175,6 +175,7 @@ BEGIN
     "S",            ID_FILE_SAVE,           VIRTKEY, CONTROL, NOINVERT
     VK_F6,          ID_NEXT_PANE,           VIRTKEY, NOINVERT
     VK_F6,          ID_PREV_PANE,           VIRTKEY, SHIFT, NOINVERT
+    VK_F3,          ID_BTN_FIND_NEXT,       VIRTKEY, NOINVERT
 END
 
 
@@ -184,8 +185,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 0,1,0,1
- PRODUCTVERSION 0,1,0,1
+ FILEVERSION 0,2,0,1
+ PRODUCTVERSION 0,2,0,1
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -202,12 +203,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "Dreamsoft-SG"
             VALUE "FileDescription", "CABNodeExplorer Module PDF-XChange Editor SDK"
-            VALUE "FileVersion", "0.1.0.1"
+            VALUE "FileVersion", "0.2.0.1"
             VALUE "InternalName", "CABNodeExplorer"
             VALUE "LegalCopyright", "Copyright © Dreamsoft 2017"
             VALUE "OriginalFilename", "CABNodeExplorer.exe"
             VALUE "ProductName", "CABNodeExplorer Module PDF-XChange Editor SDK"
-            VALUE "ProductVersion", "0.1.0.1"
+            VALUE "ProductVersion", "0.2.0.1"
         END
     END
     BLOCK "VarFileInfo"

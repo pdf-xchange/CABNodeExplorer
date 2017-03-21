@@ -169,7 +169,7 @@ LRESULT CCABNodeExplorerRightView::OnLVItemClick(int /*idCtrl*/, LPNMHDR pnmh, B
 		LVHITTESTINFO lvhti;
 		lvhti.pt = pt;
 		this->HitTest(&lvhti);
-		LVITEM lvi;
+		//LVITEM lvi;
 		if (lvhti.flags & LVHT_ONITEM)
 		{
 			// 		this->ClientToScreen(&pt);
@@ -183,4 +183,5 @@ LRESULT CCABNodeExplorerRightView::OnLVItemClick(int /*idCtrl*/, LPNMHDR pnmh, B
 		}
 	}
 	m_pMain->SetSelect(str);
+	return S_OK;
 }
