@@ -171,11 +171,16 @@ bool CToolBarFind::FindCurrNameInCab()
 				if (it != vKeys.end())
 					nSelectItemAtRight = (int)std::distance(vKeys.begin(), it);
 			}
-			
+			m_pMain->m_wndToolBarPath.AddItem(sPath, 0, 0, 0);
+			m_pMain->m_wndView1.ShowCab(sPath);
+
 			m_pMain->m_wndView2.DeleteAllItems();
 			m_pMain->m_wndView2.FullCab(sPath);
-			
-			m_pMain->m_wndView2.SelectItem(nSelectItemAtRight);			
+			m_pMain->m_wndView2.SetFocus();
+			if (idType != PXV::dt_Dictionary && idType != PXV::dt_Array)
+			{
+				m_pMain->m_wndView2.SelectItem(nSelectItemAtRight);
+			}
 		}
 		else
 		{
