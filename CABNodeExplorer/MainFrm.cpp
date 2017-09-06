@@ -9,6 +9,10 @@
 #include "MainFrm.h"
 #include <algorithm>
 
+#define FILE_MENU_POSITION 0
+#define RECENT_MENU_POSITION 4
+LPCTSTR g_lpcstrMRURegKey = _T("Software\\Microsoft\\Tracker Software\\CABNodeExplorer");
+
 CMainFrame::CMainFrame()
 {
 }
@@ -100,7 +104,7 @@ LRESULT CMainFrame::OnCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/
 
 	m_wndView2.m_pMain = this;
 	m_wndView2.m_pWorker = &m_worker;
-	m_wndView2.Create(m_wndSplitter, rcDefault, NULL, WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | LVS_REPORT | LVS_SHOWSELALWAYS, WS_EX_CLIENTEDGE);
+	m_wndView2.Create(m_wndSplitter, rcDefault, NULL, WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | LVS_SINGLESEL | LVS_REPORT | LVS_SHOWSELALWAYS, WS_EX_CLIENTEDGE);
 	m_wndView2.SetExtendedListViewStyle(LVS_EX_REGIONAL, LVS_EX_REGIONAL);
 	m_wndView2.SetExtendedListViewStyle(LVS_EX_FULLROWSELECT, LVS_EX_FULLROWSELECT);
 	m_wndView2.SetExtendedListViewStyle(LVS_EX_DOUBLEBUFFER, LVS_EX_DOUBLEBUFFER);
@@ -113,6 +117,14 @@ LRESULT CMainFrame::OnCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/
 	m_wndView2.InsertColumn(1, L"Type", 0, 300);
 	m_wndView2.InsertColumn(2, L"Value", 0, 300);
 
+	// set up MRU stuff
+	CMenuHandle menu = m_CmdBar.GetMenu();
+	CMenuHandle menuFile = menu.GetSubMenu(FILE_MENU_POSITION);
+	CMenuHandle menuMru = menuFile.GetSubMenu(RECENT_MENU_POSITION);
+	m_mru.SetMenuHandle(menuMru);
+	m_mru.SetMaxEntries(4);
+
+	m_mru.ReadFromRegistry(g_lpcstrMRURegKey);
 
 	m_wndSplitter.SetSplitterPanes(m_wndView1, m_wndView2);
 	PostMessage(MSG_POSTCREATE);
@@ -142,6 +154,38 @@ LRESULT CMainFrame::OnDestroy(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*
 LRESULT CMainFrame::OnPostCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
 {
 	SetSplitterPos(-3);
+	return 0;
+}
+
+
+bool CMainFrame::OpenTheFile(LPCTSTR szFilePath)
+{
+	if (szFilePath == NULL) return FALSE;
+	m_worker.SettLoad(szFilePath);
+	return true;
+}
+
+LRESULT CMainFrame::OnFileOpen(WORD, WORD, HWND, BOOL &)
+{
+	const int nfileTypesCount = 2;
+	const COMDLG_FILTERSPEC fileTypes[nfileTypesCount] =
+	{
+		{ L"PDF-XChange Editor Settings (*.xces)", L"*.xces;*.xcs" },
+		{ L"All Files (*.*)", L"*.*" }
+	};
+	WTL::CShellFileOpenDialog dlg1(nullptr, FOS_FORCEFILESYSTEM | FOS_PATHMUSTEXIST | FOS_FILEMUSTEXIST, L"xces", fileTypes, nfileTypesCount);
+	if (dlg1.DoModal() == IDOK)
+	{
+		CStringW strPath;
+		dlg1.GetFilePath(strPath);
+		if (OpenTheFile(strPath))
+		{
+			m_mru.AddToList(strPath);
+			m_mru.WriteToRegistry(g_lpcstrMRURegKey);
+			dlg1.GetFileTitleW(strPath);
+			UpdateTitleBar(strPath);
+		}
+	}
 	return 0;
 }
 
@@ -293,6 +337,33 @@ LRESULT CMainFrame::OnCopy(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/,
 	return (bOK != FALSE);
 }
 
+inline void CMainFrame::OnFileRecent(UINT, int nID, CWindow)
+{
+	// get file name from the MRU list
+	CString strFilePath;
+	if (m_mru.GetFromList(nID, strFilePath))
+	{
+		// open file
+		if (OpenTheFile((LPTSTR)(LPCTSTR)strFilePath))
+		{
+			m_mru.MoveToTop(nID);
+
+			// extract the file name from the full path
+			TCHAR szFileName[MAX_PATH];
+			::GetFileTitle((LPTSTR)(LPCTSTR)strFilePath, szFileName, sizeof(szFileName));
+			UpdateTitleBar(szFileName);
+		}
+		else
+			m_mru.RemoveFromList(nID);
+
+		m_mru.WriteToRegistry(g_lpcstrMRURegKey);
+	}
+	else
+	{
+		::MessageBeep(MB_ICONERROR);
+	}
+}
+
 void CMainFrame::LoadPath(const CString& strPath)
 {
 	m_wndToolBarPath.SetWindowText(strPath);
@@ -321,3 +392,16 @@ void CMainFrame::SetSelect(LPCWSTR sName)
 	m_worker.SetSelect(str);
 }
 
+void CMainFrame::UpdateTitleBar(LPCTSTR lpstrTitle)
+{
+	CString strDefault;
+	strDefault.LoadString(IDR_MAINFRAME);
+	CString strTitle = strDefault;
+	if (lpstrTitle != NULL)
+	{
+		strTitle = lpstrTitle;
+		strTitle += _T(" - ");
+		strTitle += strDefault;
+	}
+	SetWindowText(strTitle);
+}

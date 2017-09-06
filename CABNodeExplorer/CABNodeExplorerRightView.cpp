@@ -157,30 +157,72 @@ LRESULT CCABNodeExplorerRightView::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lPa
 	return lRes;
 }
 
+LRESULT CCABNodeExplorerRightView::OnContextMenu(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+{
+	const int POPUP_MENU_POSITION = 0;
+	POINT pt = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
+	if (pt.x < 0 && pt.y < 0)
+	{
+		LVITEM lvi = { 0 };
+		GetSelectedItem(&lvi);
+		if (lvi.iItem >= 0)
+		{
+			CRect rc;
+			GetItemRect(lvi.iItem, &rc, LVIR_LABEL);
+			pt.x = rc.left;
+			pt.y = rc.bottom - 1;
+			ClientToScreen(&pt);
+		}
+		else
+		{
+			CRect rc;
+			GetWindowRect(&rc);
+			pt.x = rc.left;
+			pt.y = rc.bottom;
+			ClientToScreen(&pt);
+		}
+	}
+	LVHITTESTINFO lvhti;
+	lvhti.pt = pt;
+	ScreenToClient(&lvhti.pt);
+	HitTest(&lvhti);
+	CString str;
+	if (lvhti.flags & LVHT_ONITEM)
+	{
+		GetItemText(lvhti.iItem, 0, str);
+	}
+	if (!str.IsEmpty())
+		m_pMain->SetSelect(str);
+
+	BOOL res = FALSE;
+	CMenu menu;
+	menu.LoadMenu(IDR_POPUP);
+	CMenuHandle menuPopup = menu.GetSubMenu(POPUP_MENU_POSITION);
+	if (m_pMain && ::IsWindow(m_pMain->m_hWnd))
+		res = m_pMain->m_CmdBar.TrackPopupMenu(menuPopup, TPM_RIGHTBUTTON | TPM_VERTICAL, pt.x, pt.y);
+	return res;
+}
+
 LRESULT CCABNodeExplorerRightView::OnLVItemClick(int /*idCtrl*/, LPNMHDR pnmh, BOOL& /*bHandled*/)
 {
 	CString str;
-	if (pnmh->hwndFrom == this->m_hWnd)
+	if (pnmh->hwndFrom == m_hWnd)
 	{
-		POINT pt;
-		::GetCursorPos((LPPOINT)&pt);
-		this->ScreenToClient(&pt);
-
-		LVHITTESTINFO lvhti;
+/** /
+		CPoint pt;
+		::GetCursorPos(&pt);
+		ScreenToClient(&pt);
+		LVHITTESTINFO lvhti = { 0 };
 		lvhti.pt = pt;
-		this->HitTest(&lvhti);
-		//LVITEM lvi;
+		//lpnmitem->iItem
+		HitTest(&lvhti);
 		if (lvhti.flags & LVHT_ONITEM)
 		{
-			// 		this->ClientToScreen(&pt);
-			// 		lvi.mask = LVIF_PARAM;
-			// 		lvi.iItem = lvhti.iItem;
-			// 		lvi.iSubItem = 0;
-			// 		if (!this->GetItem(&lvi))
-			// 			return 0;
-
 			GetItemText(lvhti.iItem, 0, str);
 		}
+*/
+		LPNMITEMACTIVATE lpnmitem = (LPNMITEMACTIVATE)pnmh;
+		GetItemText(lpnmitem->iItem, 0, str);
 	}
 	m_pMain->SetSelect(str);
 	return S_OK;

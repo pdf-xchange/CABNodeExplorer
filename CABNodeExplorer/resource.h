@@ -11,6 +11,7 @@
 #define IDR_MAINFRAME                   128
 #define IDT_MAINFRAME                   128
 #define IDR_TOOLBAR1                    201
+#define IDR_POPUP                       205
 #define IDT_FIND                        12320
 #define ID_BUTTON32772                  32772
 #define ID_EXPLORERBACK                 32774
@@ -18,13 +19,15 @@
 #define ID_BTN_FIND_NEXT                32784
 #define ID_BTN_FIND                     32785
 #define ID_VIEW_SEARCHBAR               32786
+#define ID_TREENODE                     32789
+#define ID_VIEWNODE                     32790
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        205
-#define _APS_NEXT_COMMAND_VALUE         32789
+#define _APS_NEXT_RESOURCE_VALUE        206
+#define _APS_NEXT_COMMAND_VALUE         32794
 #define _APS_NEXT_CONTROL_VALUE         1000
 #define _APS_NEXT_SYMED_VALUE           103
 #endif

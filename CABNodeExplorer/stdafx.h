@@ -31,7 +31,8 @@ extern CAppModule _Module;
 #include <atldlgs.h>
 #include <atlctrlw.h>
 #include <atlsplit.h>
-
+#include <atlcrack.h>
+#include <atlmisc.h>
 
 #include "PDFEditorSDK.h"
 

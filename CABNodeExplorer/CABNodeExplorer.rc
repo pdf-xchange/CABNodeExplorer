@@ -91,8 +91,14 @@ IDR_MAINFRAME MENU
 BEGIN
     POPUP "&File"
     BEGIN
+        MENUITEM "&Open...\tCtrl+O",            ID_FILE_OPEN
         MENUITEM "&Save\tCtrl+S",               ID_FILE_SAVE
         MENUITEM "Save &As...",                 ID_FILE_SAVE_AS
+        MENUITEM SEPARATOR
+        POPUP "Recent &Files"
+        BEGIN
+            MENUITEM "(empty)", ID_FILE_MRU_FILE1 , GRAYED
+        END
         MENUITEM SEPARATOR
         MENUITEM "E&xit",                       ID_APP_EXIT
     END
@@ -109,6 +115,18 @@ BEGIN
     POPUP "&Help"
     BEGIN
         MENUITEM "&About CABNodeExplorer...",   ID_APP_ABOUT
+    END
+END
+
+IDR_POPUP MENU
+BEGIN
+    POPUP "TreeNode"
+    BEGIN
+        MENUITEM "&Copy\tCtrl+C",               ID_EDIT_COPY
+    END
+    POPUP "ViewNode"
+    BEGIN
+        MENUITEM "&Copy\tCtrl+C",               ID_EDIT_COPY
     END
 END
 
@@ -166,6 +184,7 @@ END
 
 IDR_MAINFRAME ACCELERATORS
 BEGIN
+    VK_F3,          ID_BTN_FIND_NEXT,       VIRTKEY, NOINVERT
     VK_BACK,        ID_EXPLORERBACK,        VIRTKEY, CONTROL, NOINVERT
     VK_RETURN,      ID_EXPLORERGO,          VIRTKEY, CONTROL, NOINVERT
     VK_TAB,         ID_EXPLORERTAB,         VIRTKEY, NOINVERT
@@ -175,7 +194,7 @@ BEGIN
     "S",            ID_FILE_SAVE,           VIRTKEY, CONTROL, NOINVERT
     VK_F6,          ID_NEXT_PANE,           VIRTKEY, NOINVERT
     VK_F6,          ID_PREV_PANE,           VIRTKEY, SHIFT, NOINVERT
-    VK_F3,          ID_BTN_FIND_NEXT,       VIRTKEY, NOINVERT
+    "C",            ID_EDIT_COPY,           VIRTKEY, CONTROL, NOINVERT
 END
 
 
@@ -185,8 +204,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 0,2,0,1
- PRODUCTVERSION 0,2,0,1
+ FILEVERSION 0,3,0,1
+ PRODUCTVERSION 0,3,0,1
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -203,12 +222,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "Dreamsoft-SG"
             VALUE "FileDescription", "CABNodeExplorer Module PDF-XChange Editor SDK"
-            VALUE "FileVersion", "0.2.0.1"
+            VALUE "FileVersion", "0.3.0.1"
             VALUE "InternalName", "CABNodeExplorer"
             VALUE "LegalCopyright", "Copyright © Dreamsoft 2017"
             VALUE "OriginalFilename", "CABNodeExplorer.exe"
             VALUE "ProductName", "CABNodeExplorer Module PDF-XChange Editor SDK"
-            VALUE "ProductVersion", "0.2.0.1"
+            VALUE "ProductVersion", "0.3.0.1"
         END
     END
     BLOCK "VarFileInfo"
