@@ -69,8 +69,8 @@ LRESULT CCABNodeExplorerLeftView::OnSelChanged(int /*idCtrl*/, LPNMHDR pnmh, BOO
 
 	_cab_node_t pNode((PXV::ICabNode*)pItem->lParam, true);
 	//pNode.p
-	
-	std::function<void(const CTreeItem& item, CString& strPath)> _path = [&](const CTreeItem& item, CString& strPath) 
+
+	std::function<void(const CTreeItem& item, CString& strPath)> _path = [&](const CTreeItem& item, CString& strPath)
 	{
 		CTreeItem itemParent = item.GetParent();
 		if (!itemParent.IsNull())
@@ -80,7 +80,7 @@ LRESULT CCABNodeExplorerLeftView::OnSelChanged(int /*idCtrl*/, LPNMHDR pnmh, BOO
 		strPath.Append(L".");
 		strPath.Append(str);
 	};
-		
+
 	CString strPath;
 	_path(treeItem, strPath);
 	strPath.Delete(0, 2);
@@ -126,29 +126,59 @@ void CCABNodeExplorerLeftView::FillRoot()
 
 void CCABNodeExplorerLeftView::FillItem(CTreeItem& parentItem, _cab_node_t& parentNode)
 {
-	auto names = parentNode.Dictionary_GetKeys();
-	for (auto strName : names)
+	if (parentNode.IsArray())
 	{
-		_cab_node_t pNode(parentNode.at(strName.GetBuffer()));
 
-		PXV::CabDataTypeID idType = pNode.GetType();
-		if (idType == PXV::dt_Dictionary || idType == PXV::dt_Array)
+		for (int i = 0; i < parentNode.size(); i++)
 		{
-			CString str(strName);
-			//if (idType == PXV::dt_Array)
-			//	str.Format(L"%s[%d]", (LPCWSTR)strName, pNode.size());
+			_cab_node_t pNode(parentNode.at(i));
 
-			TVINSERTSTRUCT tvs = { 0 };
-			tvs.item.mask = TVIF_TEXT | TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_CHILDREN | TVIF_PARAM;
-			tvs.item.pszText = str.GetBuffer();
-			tvs.item.iImage = I_IMAGECALLBACK;
-			tvs.item.iSelectedImage = I_IMAGECALLBACK;
-			tvs.item.cChildren = I_CHILDRENCALLBACK;
+			PXV::CabDataTypeID idType = pNode.GetType();
+			if (idType == PXV::dt_Dictionary || idType == PXV::dt_Array)
+			{
+				CString str;
+				str.Format(L"[%d]", i);
 
-			tvs.item.lParam = (LPARAM)pNode.Detach();
-			tvs.hParent = parentItem;
-			tvs.hInsertAfter = TVI_LAST;
-			InsertItem(&tvs);
+				TVINSERTSTRUCT tvs = { 0 };
+				tvs.item.mask = TVIF_TEXT | TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_CHILDREN | TVIF_PARAM;
+				tvs.item.pszText = str.GetBuffer();
+				tvs.item.iImage = I_IMAGECALLBACK;
+				tvs.item.iSelectedImage = I_IMAGECALLBACK;
+				tvs.item.cChildren = I_CHILDRENCALLBACK;
+
+				tvs.item.lParam = (LPARAM)pNode.Detach();
+				tvs.hParent = parentItem;
+				tvs.hInsertAfter = TVI_LAST;
+				InsertItem(&tvs);
+			}
+		}
+	}
+	else
+	{
+		auto names = parentNode.Dictionary_GetKeys();
+		for (auto strName : names)
+		{
+			_cab_node_t pNode(parentNode.at(strName.GetBuffer()));
+
+			PXV::CabDataTypeID idType = pNode.GetType();
+			if (idType == PXV::dt_Dictionary || idType == PXV::dt_Array)
+			{
+				CString str(strName);
+				//if (idType == PXV::dt_Array)
+				//	str.Format(L"%s[%d]", (LPCWSTR)strName, pNode.size());
+
+				TVINSERTSTRUCT tvs = { 0 };
+				tvs.item.mask = TVIF_TEXT | TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_CHILDREN | TVIF_PARAM;
+				tvs.item.pszText = str.GetBuffer();
+				tvs.item.iImage = I_IMAGECALLBACK;
+				tvs.item.iSelectedImage = I_IMAGECALLBACK;
+				tvs.item.cChildren = I_CHILDRENCALLBACK;
+
+				tvs.item.lParam = (LPARAM)pNode.Detach();
+				tvs.hParent = parentItem;
+				tvs.hInsertAfter = TVI_LAST;
+				InsertItem(&tvs);
+			}
 		}
 	}
 }
