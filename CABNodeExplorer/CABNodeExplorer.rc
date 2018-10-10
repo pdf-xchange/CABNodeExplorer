@@ -97,7 +97,7 @@ BEGIN
         MENUITEM SEPARATOR
         POPUP "Recent &Files"
         BEGIN
-            MENUITEM "(empty)", ID_FILE_MRU_FILE1 , GRAYED
+            MENUITEM "(empty)",                     ID_FILE_MRU_FILE1, GRAYED
         END
         MENUITEM SEPARATOR
         MENUITEM "E&xit",                       ID_APP_EXIT
@@ -152,7 +152,7 @@ CAPTION "About"
 FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,130,81,50,14
-    CTEXT           "CABNodeExplorer\n Application v0.1\n\nCopyright © Dreamsoft 2017",IDC_STATIC,17,57,96,32
+    CTEXT           "CABNodeExplorer\n Application v3.0.2\n\nCopyright © Dreamsoft 2018",IDC_STATIC,17,57,96,32
     ICON            IDR_MAINFRAME,IDC_STATIC,55,26,20,20
     GROUPBOX        "",IDC_STATIC,7,7,115,88
 END
@@ -204,8 +204,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 0,3,0,1
- PRODUCTVERSION 0,3,0,1
+ FILEVERSION 0,3,0,2
+ PRODUCTVERSION 0,3,0,2
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -222,12 +222,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "Dreamsoft-SG"
             VALUE "FileDescription", "CABNodeExplorer Module PDF-XChange Editor SDK"
-            VALUE "FileVersion", "0.3.0.1"
+            VALUE "FileVersion", "0.3.0.2"
             VALUE "InternalName", "CABNodeExplorer"
             VALUE "LegalCopyright", "Copyright © Dreamsoft 2017"
             VALUE "OriginalFilename", "CABNodeExplorer.exe"
             VALUE "ProductName", "CABNodeExplorer Module PDF-XChange Editor SDK"
-            VALUE "ProductVersion", "0.3.0.1"
+            VALUE "ProductVersion", "0.3.0.2"
         END
     END
     BLOCK "VarFileInfo"
